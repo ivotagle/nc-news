@@ -13,11 +13,4 @@ This portfolio project was created as part of a Digital Skills Bootcamp in Softw
 
 Dependencies to install:
 
-0. Making sure npm has been initiated: npm init -y
-
 1. Jest: npm install --save -dev jest
-2. PSql: npm install pg
-3. Express: npm install express --save
-4. dotenv: npm install dotenv --save
-5. Pg Format: npm install pg-format
-6. Supertest: npm install -D supertest
