@@ -14,7 +14,6 @@ exports.selectArticles = () => {
   ORDER BY articles.created_at DESC `;
 
   return db.query(text).then(({ rows }) => {
-    console.log(rows);
     return rows;
   });
 };
@@ -24,5 +23,14 @@ exports.selectArticlesById = (article_id) => {
   const values = [article_id];
   return db.query(text, values).then(({ rows }) => {
     return rows[0];
+  });
+};
+
+exports.selectCommentsByArticleId = (article_id) => {
+  const text = `SELECT article_id, comment_id, votes, author, created_at, body FROM comments WHERE article_id = $1 ORDER BY created_at DESC`;
+  const values = [article_id];
+
+  return db.query(text, values).then(({ rows }) => {
+    return rows;
   });
 };
