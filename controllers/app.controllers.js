@@ -4,6 +4,7 @@ const {
   selectArticlesById,
   selectArticles,
   selectCommentsByArticleId,
+  addComment,
 } = require("../models/app.models");
 
 exports.getApi = (req, res) => {
@@ -55,4 +56,16 @@ exports.getCommentsByArticleId = (req, res, next) => {
     .catch((err) => {
       next(err);
     });
+};
+
+exports.postComment = (req, res, next) => {
+  const { article_id } = req.params;
+
+  const { username, body } = req.body;
+
+  return addComment(article_id, username, body)
+    .then((newComment) => {
+      res.status(201).send({ newComment });
+    })
+    .catch(next);
 };
