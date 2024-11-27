@@ -131,6 +131,30 @@ describe("GET /api/articles/:article_id/comments", () => {
   });
 });
 
+describe("POST /api/articles/:article_id/comments", () => {
+  test("POST 201 adding successfully a comment for an article", () => {
+    const newComment = {
+      username: "icellusedkars",
+      body: "The path of the righteous man is beset on all sides by the inequities of the selfish and the tyranny of evil men...",
+    };
+
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(201)
+      .then(({ body }) => {
+        const postedComment = body.newComment[0];
+        expect(postedComment).toMatchObject({
+          article_id: 1,
+          comment_id: expect.any(Number),
+          author: expect.any(String),
+          created_at: expect.any(String),
+          body: expect.any(String),
+        });
+      });
+  });
+});
+
 describe("GET Generic Errors", () => {
   test("404: Responds with an error when the endpoint does not exist", () => {
     return request(app)

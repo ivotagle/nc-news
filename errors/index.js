@@ -4,7 +4,7 @@ exports.handleCustomErrors = (err, req, res, next) => {
   } else next(err);
 
   if (err.code === "22003") {
-    res.status(404).send({ msg: "Bad request: Article not found" });
+    res.status(404).send({ msg: "Bad request: Key not found" });
   } else next(err);
 };
 

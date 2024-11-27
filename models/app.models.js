@@ -34,3 +34,19 @@ exports.selectCommentsByArticleId = (article_id) => {
     return rows;
   });
 };
+
+exports.addComment = (article_id, username, body) => {
+  const text = `INSERT INTO comments (article_id, author, body) VALUES ($1, $2, $3) RETURNING comment_id, article_id, author, body, created_at;`;
+
+  const values = [article_id, username, body];
+
+  return db
+    .query(text, values)
+    .then(({ rows }) => {
+      //console.log(rows, "<=rows");
+      return rows;
+    })
+    .catch((err) => {
+      console.log(err, "<=this err");
+    });
+};
