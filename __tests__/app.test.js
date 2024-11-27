@@ -41,6 +41,31 @@ describe("GET /api/topics", () => {
   });
 });
 
+describe("GET /api/articles", () => {
+  test("200: returns and array with all the articles, sorted by descending creation date and new comment_count", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        expect(Array.isArray(body)).toBe(true);
+        body.forEach((article) => {
+          expect(Object.keys(article)).toHaveLength(8);
+          expect(article).toMatchObject({
+            article_id: expect.any(Number),
+            title: expect.any(String),
+            topic: expect.any(String),
+            author: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            comment_count: expect.any(Number),
+            article_img_url: expect.any(String),
+          });
+        });
+        expect(body).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+});
+
 describe("GET /api/articles/:article_id", () => {
   test("200: returns and array with the selected article.", () => {
     return request(app)

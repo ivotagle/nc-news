@@ -3,6 +3,7 @@ const { handleServerErrors } = require("./errors/index.js");
 const {
   getApi,
   getTopics,
+  getArticles,
   getArticlesById,
 } = require("./controllers/app.controllers");
 
@@ -11,6 +12,8 @@ const app = express();
 app.get("/api", getApi);
 
 app.get("/api/topics", getTopics);
+
+app.get("/api/articles", getArticles);
 
 app.get("/api/articles/:article_id", getArticlesById);
 
