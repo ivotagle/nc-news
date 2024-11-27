@@ -48,6 +48,7 @@ describe("GET /api/articles", () => {
       .expect(200)
       .then(({ body }) => {
         expect(Array.isArray(body)).toBe(true);
+        expect(body.length).toBeGreaterThan(0);
         body.forEach((article) => {
           expect(Object.keys(article)).toHaveLength(8);
           expect(article).toMatchObject({
@@ -91,6 +92,41 @@ describe("GET /api/articles/:article_id", () => {
       .expect(400)
       .then(({ body }) => {
         expect(body).toEqual({ msg: "Bad request: invalid format" });
+      });
+  });
+
+  test("404: if article_id is a number, but it does not exist in the DB", () => {
+    return request(app)
+      .get("/api/articles/9999")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "Article 9999 not found" });
+      });
+  });
+});
+
+describe("GET /api/articles/:article_id/comments", () => {
+  test("200: This will get all comments from an specific article", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(Array.isArray(body)).toBe(true);
+        expect(body.length).toBeGreaterThan(0);
+        body.forEach((comment) => {
+          expect(Object.keys(comment)).toHaveLength(6);
+          expect(comment).toMatchObject({
+            article_id: 1,
+            comment_id: expect.any(Number),
+            votes: expect.any(Number),
+            author: expect.any(String),
+            created_at: expect.any(String),
+            body: expect.any(String),
+          });
+        });
+        expect(body).toBeSortedBy("created_at", {
+          descending: true,
+        });
       });
   });
 });
