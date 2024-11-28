@@ -6,12 +6,26 @@ exports.readTopics = () => {
   });
 };
 
-exports.selectArticles = () => {
+exports.selectArticles = (sort_by = "created_at", order = "desc") => {
+  const validColumns = [
+    "article_id",
+    "title",
+    "author",
+    "created_at",
+    "topic",
+    "votes",
+  ];
+  const validOrder = ["asc", "desc"];
+
+  if (!validColumns.includes(sort_by) || !validOrder.includes(order)) {
+    throw new Error("Invalid sort or order");
+  }
+
   const text = `SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url, CAST (COUNT(comments.comment_id) AS INTEGER) AS comment_count
   FROM articles
   LEFT JOIN comments comments ON articles.article_id = comments.article_id
   GROUP BY articles.article_id
-  ORDER BY articles.created_at DESC `;
+  ORDER BY ${sort_by} ${order} `;
 
   return db.query(text).then(({ rows }) => {
     return rows;
