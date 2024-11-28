@@ -67,3 +67,18 @@ exports.addComment = (article_id, username, body) => {
       console.log(err, "<=this err");
     });
 };
+
+exports.deleteCommentById = (comment_id) => {
+  const text = `DELETE FROM comments WHERE comment_id = $1 RETURNING *;`;
+  const values = [comment_id];
+
+  return db
+    .query(text, values)
+    .then(({ rows }) => {
+      console.log(rows);
+      return rows[0];
+    })
+    .catch((err) => {
+      console.log(err, "<=this");
+    });
+};

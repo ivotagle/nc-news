@@ -207,6 +207,12 @@ describe("POST /api/articles/:article_id/comments", () => {
   });
 });
 
+describe("DELETE /api/comments/:comment_id", () => {
+  test("204 Successfully delete a comment by comment_id", () => {
+    return request(app).delete("/api/comments/1").expect(204);
+  });
+});
+
 describe("GET Generic Errors", () => {
   test("404: Responds with an error when the endpoint does not exist", () => {
     return request(app)
