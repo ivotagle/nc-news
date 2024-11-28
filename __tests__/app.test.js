@@ -211,6 +211,15 @@ describe("DELETE /api/comments/:comment_id", () => {
   test("204 Successfully delete a comment by comment_id", () => {
     return request(app).delete("/api/comments/1").expect(204);
   });
+
+  test("400: error due to a bad request -string instead of number", () => {
+    return request(app)
+      .delete("/api/comments/apples")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "Bad request: invalid format" });
+      });
+  });
 });
 
 describe("GET /api/users", () => {
@@ -229,6 +238,18 @@ describe("GET /api/users", () => {
         });
       });
   });
+
+  //   test("200: returns empty array when no users are found", () => {
+  //     // testing this mock that allows me to do not touch the DB and test this.
+  //     jest.spyOn(db, "query").mockResolvedValueOnce({ rows: [] });
+
+  //     return request(app)
+  //       .get("/api/users")
+  //       .expect(200)
+  //       .then(({ body }) => {
+  //         expect(body.users).toEqual([]);
+  //       });
+  //   });
 });
 
 describe("GET Generic Errors", () => {
