@@ -25,7 +25,30 @@ exports.getTopics = (req, res, next) => {
 };
 
 exports.getArticles = (req, res, next) => {
-  selectArticles()
+  const { sort_by = "created_at", order = "desc" } = req.query;
+
+  const validColumns = [
+    "article_id",
+    "title",
+    "author",
+    "created_at",
+    "topic",
+    "votes",
+  ];
+
+  if (!validColumns.includes(sort_by)) {
+    return res.status(400).send({ msg: "Bad request: invalid sort column" });
+  }
+
+  const validOrder = ["asc", "desc"];
+
+  if (!validOrder.includes(order)) {
+    return res
+      .status(400)
+      .send({ msg: "Bad request: order can be only ascendent or descendent" });
+  }
+
+  selectArticles(sort_by, order)
     .then((articles) => {
       res.status(200).send(articles);
     })

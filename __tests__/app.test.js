@@ -65,6 +65,52 @@ describe("GET /api/articles", () => {
         expect(body).toBeSortedBy("created_at", { descending: true });
       });
   });
+
+  test("200: sort articles by any valid column -descending", () => {
+    return request(app)
+      .get("/api/articles?sort_by=created_at&order=desc")
+      .expect(200)
+      .then(({ body }) => {
+        //const { articles } = body;
+        expect(Array.isArray(body)).toBe(true);
+        expect(body.length).toBe(13);
+        expect(body).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+
+  test("200: sort articles by any valid column - ascending", () => {
+    return request(app)
+      .get("/api/articles?sort_by=created_at&order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        //const { articles } = body;
+        expect(Array.isArray(body)).toBe(true);
+        expect(body.length).toBe(13);
+        expect(body).toBeSortedBy("created_at", { ascending: true });
+      });
+  });
+
+  test("400: returns error if sort_by column is invalid", () => {
+    return request(app)
+      .get("/api/articles?sort_by=wicked_column&order=desc")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({
+          msg: "Bad request: invalid sort column",
+        });
+      });
+  });
+
+  test("400: returns error if sort_by order is invalid", () => {
+    return request(app)
+      .get("/api/articles?sort_by=created_at&order=zigzag")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({
+          msg: "Bad request: order can be only ascendent or descendent",
+        });
+      });
+  });
 });
 
 describe("GET /api/articles/:article_id", () => {
