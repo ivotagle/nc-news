@@ -7,6 +7,7 @@ const {
   addComment,
   updateArticleVotes,
   deleteCommentById,
+  selectAllUsers,
 } = require("../models/app.models");
 
 exports.getApi = (req, res) => {
@@ -106,4 +107,12 @@ exports.deleteComment = (req, res, next) => {
     .catch((err) => {
       next(err);
     });
+};
+
+exports.getAllUsers = (req, res, next) => {
+  selectAllUsers()
+    .then((users) => {
+      res.status(200).send({ users });
+    })
+    .catch(next);
 };

@@ -75,10 +75,17 @@ exports.deleteCommentById = (comment_id) => {
   return db
     .query(text, values)
     .then(({ rows }) => {
-      console.log(rows);
       return rows[0];
     })
     .catch((err) => {
       console.log(err, "<=this");
+    });
+};
+
+exports.selectAllUsers = () => {
+  return db
+    .query(`SELECT username, name, avatar_url FROM users;`)
+    .then(({ rows }) => {
+      return rows;
     });
 };
