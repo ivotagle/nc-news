@@ -69,16 +69,22 @@ exports.addComment = (article_id, username, body) => {
 };
 
 exports.deleteCommentById = (comment_id) => {
+  if (isNaN(comment_id)) {
+    return Promise.reject(new Error("Bad request: invalid format"));
+  }
   const text = `DELETE FROM comments WHERE comment_id = $1 RETURNING *;`;
   const values = [comment_id];
 
   return db
     .query(text, values)
     .then(({ rows }) => {
+      if (rows.length === 0) {
+        return null;
+      }
       return rows[0];
     })
     .catch((err) => {
-      console.log(err, "<=this");
+      throw err;
     });
 };
 
