@@ -7,6 +7,7 @@ const {
   getArticlesById,
   getCommentsByArticleId,
   postComment,
+  patchArticlesVotes,
 } = require("./controllers/app.controllers");
 
 const app = express();
@@ -20,6 +21,8 @@ app.get("/api/topics", getTopics);
 app.get("/api/articles", getArticles);
 
 app.get("/api/articles/:article_id", getArticlesById);
+
+app.patch("/api/articles/:article_id", patchArticlesVotes);
 
 app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 
