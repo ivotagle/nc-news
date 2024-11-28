@@ -105,6 +105,58 @@ describe("GET /api/articles/:article_id", () => {
   });
 });
 
+describe("PATCH /api/articles/:article_id", () => {
+  test("200: votes updated with a positive value", () => {
+    const updatedVotes = { inc_votes: 5 };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(updatedVotes)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article.votes).toBeGreaterThan(0);
+        expect(body.article.article_id).toBe(1);
+      });
+  });
+
+  test("200: votes updated with a negative value", () => {
+    const updatedVotes = { inc_votes: -5 };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(updatedVotes)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article.votes).toBeGreaterThan(0);
+        expect(body.article.article_id).toBe(1);
+      });
+  });
+
+  test("400: returns error if inc_votes is not a number", () => {
+    const updatedVotes = { inc_votes: "upthevotes" };
+
+    return request(app)
+      .patch("/api/articles/1")
+      .send(updatedVotes)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({
+          msg: "Bad request: invalid format",
+        });
+      });
+  });
+
+  test("400: returns error if inc_votes is missing", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({})
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({
+          msg: "Bad request: invalid format",
+        });
+      });
+  });
+});
+
 describe("GET /api/articles/:article_id/comments", () => {
   test("200: This will get all comments from an specific article", () => {
     return request(app)

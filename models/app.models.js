@@ -35,6 +35,23 @@ exports.selectCommentsByArticleId = (article_id) => {
   });
 };
 
+exports.updateArticleVotes = (article_id, inc_votes) => {
+  const newVote = `UPDATE articles
+  SET votes = votes + $1
+  WHERE article_id = $2
+  RETURNING *;`;
+  const values = [inc_votes, article_id];
+
+  return db
+    .query(newVote, values)
+    .then(({ rows }) => {
+      return rows[0];
+    })
+    .catch((err) => {
+      throw err;
+    });
+};
+
 exports.addComment = (article_id, username, body) => {
   const text = `INSERT INTO comments (article_id, author, body) VALUES ($1, $2, $3) RETURNING comment_id, article_id, author, body, created_at;`;
 

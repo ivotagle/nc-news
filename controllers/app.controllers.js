@@ -5,6 +5,7 @@ const {
   selectArticles,
   selectCommentsByArticleId,
   addComment,
+  updateArticleVotes,
 } = require("../models/app.models");
 
 exports.getApi = (req, res) => {
@@ -39,6 +40,29 @@ exports.getArticlesById = (req, res, next) => {
       if (!article) {
         return res.status(404).send({ msg: `Article ${article_id} not found` });
       }
+      res.status(200).send({ article });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.patchArticlesVotes = (req, res, next) => {
+  const { article_id } = req.params;
+  const { inc_votes } = req.body;
+
+  if (
+    inc_votes === undefined ||
+    typeof inc_votes !== "number" ||
+    isNaN(inc_votes)
+  ) {
+    const err = new Error("Bad request: invalid format");
+    err.status = 400;
+    return next(err);
+  }
+
+  updateArticleVotes(article_id, inc_votes)
+    .then((article) => {
       res.status(200).send({ article });
     })
     .catch((err) => {
