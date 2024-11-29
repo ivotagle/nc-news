@@ -6,7 +6,7 @@ exports.readTopics = () => {
   });
 };
 
-exports.selectArticles = (sort_by = "created_at", order = "desc") => {
+exports.selectArticles = (sort_by = "created_at", order = "desc", topic) => {
   const validColumns = [
     "article_id",
     "title",
@@ -21,15 +21,33 @@ exports.selectArticles = (sort_by = "created_at", order = "desc") => {
     throw new Error("Invalid sort or order");
   }
 
-  const text = `SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url, CAST (COUNT(comments.comment_id) AS INTEGER) AS comment_count
+  let text = `SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url, CAST (COUNT(comments.comment_id) AS INTEGER) AS comment_count
   FROM articles
-  LEFT JOIN comments comments ON articles.article_id = comments.article_id
-  GROUP BY articles.article_id
-  ORDER BY ${sort_by} ${order} `;
+  LEFT JOIN comments comments ON articles.article_id = comments.article_id  `;
+  //4 hours to realise WHERE have to be here
+  //GROUP BY articles.article_id
+  //ORDER BY ${sort_by} ${order} ;
 
-  return db.query(text).then(({ rows }) => {
-    return rows;
-  });
+  const values = [];
+
+  if (topic) {
+    text += ` WHERE articles.topic = $1`;
+    values.push(topic);
+  }
+
+  text += ` GROUP BY articles.article_id`;
+
+  text += ` ORDER BY ${sort_by} ${order}`;
+
+  return db
+    .query(text, values)
+    .then(({ rows }) => {
+      return rows;
+    })
+    .catch((err) => {
+      console.log(err);
+      throw err;
+    });
 };
 
 exports.selectArticlesById = (article_id) => {

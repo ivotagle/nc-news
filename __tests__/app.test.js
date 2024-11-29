@@ -111,6 +111,28 @@ describe("GET /api/articles", () => {
         });
       });
   });
+
+  test("200: filter articles by existing topic", () => {
+    return request(app)
+      .get("/api/articles?topic=cats")
+      .expect(200)
+      .then(({ body }) => {
+        expect(Array.isArray(body)).toBe(true);
+        body.forEach((article) => {
+          expect(article.topic).toBe("cats");
+        });
+      });
+  });
+
+  test("200: filter articles by non existing topic, returns all articles", () => {
+    return request(app)
+      .get("/api/articles?topic=radiohead")
+      .expect(200)
+      .then(({ body }) => {
+        expect(Array.isArray(body)).toBe(true);
+        expect(body).toBeSortedBy("created_at", { descending: true });
+      });
+  });
 });
 
 describe("GET /api/articles/:article_id", () => {
