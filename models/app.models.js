@@ -51,8 +51,13 @@ exports.selectArticles = (sort_by = "created_at", order = "desc", topic) => {
 };
 
 exports.selectArticlesById = (article_id) => {
-  const text = `SELECT * FROM articles WHERE article_id = $1`;
+  const text = `SELECT articles.article_id, articles.title, articles.topic, articles.author, articles.created_at, articles.votes, articles.article_img_url, 
+  CAST(COUNT(comments.comment_id) AS INTEGER) AS comment_count
+  FROM articles
+  LEFT JOIN comments comments ON articles.article_id = comments.article_id WHERE articles.article_id = $1 GROUP BY articles.article_id`;
+
   const values = [article_id];
+
   return db.query(text, values).then(({ rows }) => {
     return rows[0];
   });
