@@ -138,18 +138,20 @@ describe("GET /api/articles", () => {
 describe("GET /api/articles/:article_id", () => {
   test("200: returns and array with the selected article.", () => {
     return request(app)
-      .get("/api/articles/1")
+      .get("/api/articles/2")
       .expect(200)
       .then(({ body }) => {
+        console.log(body);
         expect(Object.keys(body.article)).toHaveLength(8);
         expect(body.article).toMatchObject({
-          article_id: 1,
+          article_id: 2,
           title: expect.any(String),
           topic: expect.any(String),
           author: expect.any(String),
           created_at: expect.any(String),
           votes: expect.any(Number),
           article_img_url: expect.any(String),
+          comment_count: expect.any(Number),
         });
       });
   });
