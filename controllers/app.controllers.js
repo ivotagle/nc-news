@@ -25,7 +25,7 @@ exports.getTopics = (req, res, next) => {
 };
 
 exports.getArticles = (req, res, next) => {
-  const { sort_by = "created_at", order = "desc" } = req.query;
+  const { sort_by = "created_at", order = "desc", topic } = req.query;
 
   const validColumns = [
     "article_id",
@@ -36,11 +36,11 @@ exports.getArticles = (req, res, next) => {
     "votes",
   ];
 
+  const validOrder = ["asc", "desc"];
+
   if (!validColumns.includes(sort_by)) {
     return res.status(400).send({ msg: "Bad request: invalid sort column" });
   }
-
-  const validOrder = ["asc", "desc"];
 
   if (!validOrder.includes(order)) {
     return res
@@ -48,11 +48,19 @@ exports.getArticles = (req, res, next) => {
       .send({ msg: "Bad request: order can be only ascendent or descendent" });
   }
 
-  selectArticles(sort_by, order)
+  if (topic && typeof topic !== "string") {
+    return res.status(400).send({ msg: "Bad request, invalid topic" });
+  }
+
+  selectArticles(sort_by, order, topic)
     .then((articles) => {
+      if (articles.length === 0 && topic) {
+        return res.status(200).send([]);
+      }
       res.status(200).send(articles);
     })
     .catch((err) => {
+      console.error(err);
       next(err);
     });
 };
